@@ -9,14 +9,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 @Controller
 @Slf4j
-//@RequestMapping("/users")
+@RequestMapping("/users")
 public class MyUserController {
-    @Autowired
     private MyUserService myUserService;
     private  MyuserRepository repository;
 

@@ -27,9 +27,9 @@ public class Thought {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "todoitems_id", nullable = false)
-    private Todoitem todoitems;
+    private TodoItem todoitems;
 
-    public Thought(Integer id, String text, String category, Myuser user, Todoitem todoitems) {
+    public Thought(Integer id, String text, String category, Myuser user, TodoItem todoitems) {
         this.id = id;
         this.text = text;
         this.category = category;

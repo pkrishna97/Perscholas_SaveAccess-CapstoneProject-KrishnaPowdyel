@@ -1,46 +1,60 @@
 package com.perscholas.krishna.saveaccess.controllers;
-
 import com.perscholas.krishna.saveaccess.dao.TodoAddRequest;
 import com.perscholas.krishna.saveaccess.models.Myuser;
-import com.perscholas.krishna.saveaccess.models.Todoitem;
+import com.perscholas.krishna.saveaccess.models.TodoItem;
 import com.perscholas.krishna.saveaccess.repos.MyuserRepository;
 import com.perscholas.krishna.saveaccess.repos.TodoItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@Controller
+@RestController
 public class TodoItemController {
 
-    @Autowired
     TodoItemRepository todoItemRepository;
 
-    @Autowired
     MyuserRepository myuserRepository;
 
     @PostMapping("/todos")
-    public String addTodoItem(@RequestParam(name="userId")int userId, @RequestParam(name="text")String text, Model model) {
-        Myuser myuser = myuserRepository.findById(userId).get();
+    public TodoItem addTodoItem(@RequestBody TodoAddRequest todoAddRequest) {
+        Myuser myuser = myuserRepository.findById(todoAddRequest.getUserId()).get();
 
-        Todoitem todoitem = new Todoitem(text, myuser);
-        List<Todoitem> todoitems = todoItemRepository.findAll();
-        model.addAttribute("todos",todoitems);
-        todoItemRepository.save(todoitem);
-        return "todopage";
+        TodoItem todoItem = new TodoItem(todoAddRequest.getText(), myuser);
+
+        TodoItem savedTodoItem = todoItemRepository.save(todoItem);
+        return savedTodoItem;
     }
 
     @GetMapping("/todos")
-    public String getAllTodos(Model model){
-        List<Todoitem> todoitems = todoItemRepository.findAll();
+    public List<TodoItem> getAllTodos(){
+        List<TodoItem> todoitems = todoItemRepository.findAll();
 
-        model.addAttribute("todos", todoitems);
+        return todoitems;
+    }
 
-        return "todopage";
+    @GetMapping("/todos/{id}")
+    public TodoItem getOneTodoItem(@PathVariable int id){
+        TodoItem todoItem = todoItemRepository.findById(id).get();
+
+        if(todoItem == null){
+            return null;
+        }
+
+        return todoItem;
+    }
+
+    @DeleteMapping("/todos/{id}")
+    public String deleteTodoItem(@PathVariable int id){
+        TodoItem todoItem = todoItemRepository.findById(id).get();
+
+        if(todoItem == null){
+            return null;
+        }
+
+        todoItemRepository.deleteById(id);
+
+        return "Successfully deleted Todo Item with id" + todoItem.getId();
     }
 }
