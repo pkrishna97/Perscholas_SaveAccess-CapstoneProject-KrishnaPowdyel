@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MyuserRepository extends JpaRepository<Myuser, Integer> {
+//    Myuser myuser deleteuser(Myuser myuser);
 }

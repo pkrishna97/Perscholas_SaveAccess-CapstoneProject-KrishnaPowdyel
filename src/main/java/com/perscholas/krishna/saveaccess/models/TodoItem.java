@@ -23,7 +23,7 @@ public class TodoItem {
     @Column(name = "completed", nullable = false)
     private Boolean completed;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private Myuser user;

@@ -10,51 +10,41 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@RestController
+@Controller
 public class TodoItemController {
-
+    @Autowired
     TodoItemRepository todoItemRepository;
 
+    @Autowired
     MyuserRepository myuserRepository;
 
-    @PostMapping("/todos")
-    public TodoItem addTodoItem(@RequestBody TodoAddRequest todoAddRequest) {
-        Myuser myuser = myuserRepository.findById(todoAddRequest.getUserId()).get();
+    @PostMapping("/todos/add")
+    public String addTodoItem(@RequestParam(name="id") int id,@RequestParam(name="text")String text,
+                                @RequestParam(name="userId")int userId, Model model) {
+        Myuser myuser = myuserRepository.findById(userId).get();
 
-        TodoItem todoItem = new TodoItem(todoAddRequest.getText(), myuser);
+        TodoItem todoItem = new TodoItem(text, myuser);
 
         TodoItem savedTodoItem = todoItemRepository.save(todoItem);
-        return savedTodoItem;
+
+        List<TodoItem> todoitems = todoItemRepository.findAll();
+
+        model.addAttribute("todos", todoitems);
+        return "todospage";
     }
 
     @GetMapping("/todos")
-    public List<TodoItem> getAllTodos(){
+    public String getAllTodos(Model model){
         List<TodoItem> todoitems = todoItemRepository.findAll();
 
-        return todoitems;
+        model.addAttribute("todos", todoitems);
+
+        return "todospage";
     }
 
-    @GetMapping("/todos/{id}")
-    public TodoItem getOneTodoItem(@PathVariable int id){
-        TodoItem todoItem = todoItemRepository.findById(id).get();
-
-        if(todoItem == null){
-            return null;
-        }
-
-        return todoItem;
+    @GetMapping("/todos/add")
+    public String addTodoPage(Model model){
+        return "todosadd";
     }
 
-    @DeleteMapping("/todos/{id}")
-    public String deleteTodoItem(@PathVariable int id){
-        TodoItem todoItem = todoItemRepository.findById(id).get();
-
-        if(todoItem == null){
-            return null;
-        }
-
-        todoItemRepository.deleteById(id);
-
-        return "Successfully deleted Todo Item with id" + todoItem.getId();
-    }
 }
